@@ -8,10 +8,6 @@ import re
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 
-import SA_Word2Vec
-
-words_dict =SA_Word2Vec.get_dictionary()
-
 # %%
 def concat_twitter_dat(path, search_word, start_date, last_date):
     results = pd.DataFrame([])
@@ -61,10 +57,9 @@ def getTextPolarity(txt):
     return TextBlob(txt).sentiment.polarity
 
 def getTextAnalysis(a):
-    sentiment = SA_Word2Vec.get_sentiments(a, words_dict)
-    if sentiment < 0:
+    if a < 0:
         return "Negative"
-    elif sentiment == 0:
+    elif a == 0:
         return "Neutral"
     else:
         return "Positive"
@@ -72,7 +67,9 @@ def getTextAnalysis(a):
 def emotiontDataAdd(twitter_data):
     results = twitter_data.copy()
     results['clean_text'] = results['text'].apply(cleanUpTweet)
-    results["emotion"] = results['clean_text'].apply(getTextAnalysis)
+    results["polarity"] = results['clean_text'].apply(getTextPolarity)
+    results["subjectivity"] = results['clean_text'].apply(getTextSubjectivity)
+    results["emotion"] = results['polarity'].apply(getTextAnalysis)
     return results
 
 # %%
@@ -86,6 +83,12 @@ def addAndSelectFeature(stock_data,
 
     results = stock_data.copy()
     results["tw_count"] = pd.NA     # number of tweets per interval
+    # results["tw_mean"] = pd.NA      # mean of number of tweets per subset_twets_per in interval
+    # results["tw_vola"] = pd.NA      # volatility of number of tweets per subset_tweets_per in interval
+    # results["tw_min"] = pd.NA       # min number of tweets per subset_tweets_per in interval
+    # results["tw_max"] = pd.NA       # max number of tweets per subset_tweets_per in interval
+    results["tw_pola"] =pd.NA      # avg polarity of tweets
+    results["tw_subj"] = pd.NA     # avg subjectivity of tweets
     results["tw_n_pos"] = pd.NA     # number of positive tweets
     results["tw_n_neg"] = pd.NA     # number of negative tweets
     results["tw_ratio_pos"] =pd.NA # share of positive tweets
@@ -109,9 +112,16 @@ def addAndSelectFeature(stock_data,
             sub_cond_2 = twitter_subset["date"] < (current_time + dt.timedelta(minutes=(int(x) - tweet_lag)))
             tweets_per[x - 1] = twitter_subset.loc[sub_cond_1 & sub_cond_2, :].shape[0]
             
-
+        # Compute Variables "tw_mean", "tw_vola", "tw_min", "tw_max"
+        # results.loc[i, "tw_mean"] = tweets_per.mean()
+        # results.loc[i, "tw_vola"] = tweets_per.var()
+        # results.loc[i, "tw_min"] = tweets_per.min()
+        # results.loc[i, "tw_max"] = tweets_per.max()
+        
 
         # Content related variables
+        results.loc[i, "tw_pola"] = twitter_subset["polarity"].mean()
+        results.loc[i, "tw_subj"] = twitter_subset["subjectivity"].mean()
         results.loc[i, "tw_n_pos"] = twitter_subset.loc[twitter_subset.emotion == "Positive", :]
         results.loc[i, "tw_n_neg"] = twitter_subset.loc[twitter_subset.emotion == "Negative", :]
         if twitter_subset.shape[0]!=0:
@@ -122,11 +132,10 @@ def addAndSelectFeature(stock_data,
 
 # %%
 def getPreaparedData(stock_name,start_date,last_date):
-    path="data/"
+    path="./data"
     search_word=stock_name
 
 
-    
     concat_data=concat_twitter_dat(path,search_word,start_date,last_date)
 
     cleand_data=concat_data
