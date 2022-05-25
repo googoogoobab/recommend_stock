@@ -1,6 +1,6 @@
 # Stock predict with twitter sentiment analysis
 
-* **StockPredict.ipynb** is for stock prediction with twitter sentiment anaylsis.
+* **StockPredict.ipynb** is for stock prediction with twitter sentiment anaylsis.  
 
 
 * You can use **BertSentimentAnalysis.ipynb** to do sentiment analysis with BERT.
