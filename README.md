@@ -5,6 +5,6 @@
 
 * You can use **BertSentimentAnalysis.ipynb** to do sentiment analysis with BERT.
 
-* You can use **Twitter Sentiment Analysis with Word2Vec, K-means Clustering.ipynb** to do sentiment analysis with Word2Vec and K-means algorithm.
+* You can use **Word2VecSentimentAnalysis.ipynb** to do sentiment analysis with Word2Vec and K-means algorithm.
 
-  (**Twitter Sentiment Analysis with Word2Vec, K-means Clustering.ipynb** has been modularized and included in **StockPredict.ipynb**)
+  (**Word2VecSentimentAnalysis.ipynb** has been modularized and included in **StockPredict.ipynb**)
