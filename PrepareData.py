@@ -73,7 +73,7 @@ def emotiontDataAdd(twitter_data):
     return results
 
 # %%
-def add_twitter_variables(stock_data,
+def addAndSelectFeature(stock_data,
                          twitter_data,
                          tweet_lag=60,
                          subset_tweets_per=1):
@@ -83,10 +83,10 @@ def add_twitter_variables(stock_data,
 
     results = stock_data.copy()
     results["tw_count"] = pd.NA     # number of tweets per interval
-    # results["tw_mean"] = pd.NA      # mean of number of tweets per subset_twets_per in interval
-    # results["tw_vola"] = pd.NA      # volatility of number of tweets per subset_tweets_per in interval
-    # results["tw_min"] = pd.NA       # min number of tweets per subset_tweets_per in interval
-    # results["tw_max"] = pd.NA       # max number of tweets per subset_tweets_per in interval
+    results["tw_mean"] = pd.NA      # mean of number of tweets per subset_twets_per in interval
+    results["tw_vola"] = pd.NA      # volatility of number of tweets per subset_tweets_per in interval
+    results["tw_min"] = pd.NA       # min number of tweets per subset_tweets_per in interval
+    results["tw_max"] = pd.NA       # max number of tweets per subset_tweets_per in interval
     results["tw_pola"] =pd.NA      # avg polarity of tweets
     results["tw_subj"] = pd.NA     # avg subjectivity of tweets
     results["tw_n_pos"] = pd.NA     # number of positive tweets
@@ -113,10 +113,10 @@ def add_twitter_variables(stock_data,
             tweets_per[x - 1] = twitter_subset.loc[sub_cond_1 & sub_cond_2, :].shape[0]
             
         # Compute Variables "tw_mean", "tw_vola", "tw_min", "tw_max"
-        # results.loc[i, "tw_mean"] = tweets_per.mean()
-        # results.loc[i, "tw_vola"] = tweets_per.var()
-        # results.loc[i, "tw_min"] = tweets_per.min()
-        # results.loc[i, "tw_max"] = tweets_per.max()
+        results.loc[i, "tw_mean"] = tweets_per.mean()
+        results.loc[i, "tw_vola"] = tweets_per.var()
+        results.loc[i, "tw_min"] = tweets_per.min()
+        results.loc[i, "tw_max"] = tweets_per.max()
         
 
         # Content related variables
@@ -152,7 +152,7 @@ def getPreaparedData(stock_name,start_date,last_date):
     stock_data.set_index('Date',drop=False, inplace=True)
     stock_data=convertDateType(stock_data)
 
-    variables_data=add_twitter_variables(stock_data,prepare_data)
+    variables_data=addAndSelectFeature(stock_data,prepare_data)
     variables_data=variables_data.fillna(0)
     variables_data=variables_data.drop(["Date"],axis=1)
 
@@ -167,7 +167,7 @@ def getPreaparedData(stock_name,start_date,last_date):
 
 
     scaler = MinMaxScaler()
-    variables_data[["tw_count"]]=scaler.fit_transform(variables_data[["tw_count"]])
+    variables_data[["tw_count","tw_mean","tw_vola","tw_min","tw_max"]]=scaler.fit_transform(variables_data[["tw_count","tw_mean","tw_vola","tw_min","tw_max"]])
     only_stock_data_training = variables_data.iloc[:, 0:6].copy()
 
     train_set, test_set = train_test_split(variables_data, test_size = 0.3,shuffle=False)
