@@ -4,7 +4,7 @@
 
 The default sentiment analysis is PrepareData.getPreaparedData() with textblobs.
 
-If you want to use custom text sentiment analysis (ex:SA_Woerd2Vec) Use PrepareDataWithSA_Word2Vec.getPreaperedData() instead of PrepareData.getPreaperedData()
+If you want to use custom text sentiment analysis (ex:SA_Word2Vec) Use PrepareDataWithSA_Word2Vec.getPreaperedData() instead of PrepareData.getPreaperedData()
 
 * You can use **BertSentimentAnalysis.ipynb** to do sentiment analysis with BERT.
 
