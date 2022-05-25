@@ -86,8 +86,6 @@ def addAndSelectFeature(stock_data,
 
     results = stock_data.copy()
     results["tw_count"] = pd.NA     # number of tweets per interval
-    results["tw_pola"] =pd.NA      # avg polarity of tweets
-    results["tw_subj"] = pd.NA     # avg subjectivity of tweets
     results["tw_n_pos"] = pd.NA     # number of positive tweets
     results["tw_n_neg"] = pd.NA     # number of negative tweets
     results["tw_ratio_pos"] =pd.NA # share of positive tweets
@@ -114,8 +112,6 @@ def addAndSelectFeature(stock_data,
 
 
         # Content related variables
-        results.loc[i, "tw_pola"] = twitter_subset["polarity"].mean()
-        results.loc[i, "tw_subj"] = twitter_subset["subjectivity"].mean()
         results.loc[i, "tw_n_pos"] = twitter_subset.loc[twitter_subset.emotion == "Positive", :]
         results.loc[i, "tw_n_neg"] = twitter_subset.loc[twitter_subset.emotion == "Negative", :]
         if twitter_subset.shape[0]!=0:
